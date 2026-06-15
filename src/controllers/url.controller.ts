@@ -1,26 +1,22 @@
 import { Request, Response } from "express";
 import { createUrlSchema } from "../validators/url.validator.js";
-import { createShortUrl, getOriginalUrl } from "../services/url.service.js";
+import {
+  createShortUrl,
+  getOriginalUrl,
+  getUrls,
+} from "../services/url.service.js";
 
-export const createUrl = async (
-  req: Request,
-  res: Response
-) => {
+export const createUrl = async (req: Request, res: Response) => {
   try {
-    const validatedData =
-      createUrlSchema.parse(req.body);
+    const validatedData = createUrlSchema.parse(req.body);
 
-    const data = await createShortUrl(
-      validatedData.url
-    );
+    const data = await createShortUrl(validatedData.url);
 
     return res.status(201).json({
       success: true,
       data: {
         ...data,
-        shortUrl: `${req.protocol}://${req.get(
-          "host"
-        )}/${data.code}`,
+        shortUrl: `${req.protocol}://${req.get("host")}/${data.code}`,
       },
     });
   } catch (error) {
@@ -33,16 +29,13 @@ export const createUrl = async (
   }
 };
 
-export const redirectToUrl = async (
-  req: Request,
-  res: Response
-) => {
+export const redirectToUrl = async (req: Request, res: Response) => {
   const { code } = req.params;
 
   const originalUrl = await getOriginalUrl(
     code,
     req.headers["user-agent"] || "unknown",
-    req.get("referer") || "direct"
+    req.get("referer") || "direct",
   );
 
   if (!originalUrl) {
@@ -53,4 +46,13 @@ export const redirectToUrl = async (
   }
 
   return res.redirect(302, originalUrl);
+};
+
+export const getAllUrls = async (req: Request, res: Response) => {
+  const urls = await getUrls();
+
+  return res.status(200).json({
+    success: true,
+    data: urls,
+  });
 };

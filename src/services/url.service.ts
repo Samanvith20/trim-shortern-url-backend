@@ -4,9 +4,9 @@ import { encodeBase62 } from "../utils/base62.js";
 import Click from "../models/click.model.js";
 
 type ShortUrlData = {
-    urlId: number;
-    code: string;
-    originalUrl: string;
+  urlId: number;
+  code: string;
+  originalUrl: string;
 };
 export const createShortUrl = async (originalUrl: string) => {
   const existingUrl = await Url.findOne({
@@ -36,12 +36,10 @@ export const createShortUrl = async (originalUrl: string) => {
   };
 };
 
-
-
 export const getOriginalUrl = async (
   code: string,
   device = "unknown",
-  referrer = "direct"
+  referrer = "direct",
 ) => {
   const url = await Url.findOne({ code });
 
@@ -61,8 +59,12 @@ export const getOriginalUrl = async (
       $inc: {
         clickCount: 1,
       },
-    }
+    },
   );
 
   return url.originalUrl;
+};
+
+export const getUrls = async () => {
+  return Url.find().sort({ createdAt: -1 }).lean();
 };

@@ -19,7 +19,7 @@ export const getNextSequence = async (): Promise<number> => {
     },
     {
       returnDocument: "after",
-    }
+    },
   );
 
   if (!counter) {
