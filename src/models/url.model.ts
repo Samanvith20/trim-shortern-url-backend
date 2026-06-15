@@ -34,8 +34,8 @@ const urlSchema = new Schema<IUrl>(
   }
 );
 
-urlSchema.index({ code: 1 }, { unique: true });
-urlSchema.index({ originalUrl: 1 }, { unique: true });
+
+
 
 const Url = mongoose.model<IUrl>("Url", urlSchema);
 
